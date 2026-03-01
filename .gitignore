@@ -14,5 +14,9 @@ ENV/
 # OS
 .DS_Store
 
+# script
+index.html
+index copy.html
+
 # Video (over GitHub 100MB limit; use Git LFS or host elsewhere if needed)
 demo.mp4
