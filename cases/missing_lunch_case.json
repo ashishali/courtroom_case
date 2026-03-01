@@ -1,0 +1,138 @@
+{
+  "title": "The Missing Lunch",
+  "scenario_intro": "Someone's lunch was taken from the office fridge. It was there at noon and gone by 12:30 PM. Only three people were in the building during that time: Morgan (the intern), Pat (the janitor), and Riley (the receptionist). As the prosecutor, you must find out who was in the break room and when, and who had the chance to take the lunch.",
+  "hints_intro": "To win you need to show who was in the break room around lunchtime and who had the opportunity to take the lunch. Look for: who saw the lunch in the fridge, who was in the break room alone, and where everyone was between 12:00 and 12:30.",
+  "characters": [
+    {
+      "name": "Morgan",
+      "role": "intern",
+      "persona": "Young intern. Was in the break room around 12:20 to eat a snack. Seems uneasy when asked about the lunch.",
+      "knows": ["E1", "E3", "E4"],
+      "liar": true,
+      "lie_strategy": "Say they were only in the break room for a minute; claim they didn't see the fridge.",
+      "facts": [
+        "Riley saw the lunch in the fridge at 12:00 PM. The lunch was gone when Riley checked again at 12:35 PM.",
+        "Morgan was in the break room from about 12:20 to 12:25 PM."
+      ]
+    },
+    {
+      "name": "Pat",
+      "role": "janitor",
+      "persona": "Quiet janitor. Was mopping the hallway during lunch. Knows who went in and out of the break room.",
+      "knows": ["E1", "E2", "E5"],
+      "liar": false,
+      "lie_strategy": "",
+      "facts": [
+        "Riley saw the lunch in the fridge at 12:00 PM; it was gone when Riley checked at 12:35 PM.",
+        "Pat was mopping the east hallway from 12:15 to 12:30 PM and had a direct view of the break room door.",
+        "Only Morgan went into the break room between 12:15 and 12:30 PM. Morgan was alone in the break room from 12:20 to 12:25 PM."
+      ]
+    },
+    {
+      "name": "Riley",
+      "role": "receptionist",
+      "persona": "Friendly receptionist. Went to the break room at 12:00 to get milk. Saw the lunch in the fridge.",
+      "knows": ["E1", "E4"],
+      "liar": false,
+      "lie_strategy": "",
+      "facts": [
+        "Riley saw the lunch in the fridge at 12:00 PM when they got milk.",
+        "The lunch was gone when Riley checked again at 12:35 PM."
+      ]
+    }
+  ],
+  "suspects": ["Morgan", "Pat", "Riley"],
+  "truth": {
+    "culprit": "Morgan",
+    "timeline": "Morgan went to break room at 12:20, took the lunch when alone, left by 12:25.",
+    "motive": "Forgot their own lunch and was hungry.",
+    "method": "Opened fridge, took the container, put it in their bag."
+  },
+  "evidence": [
+    {
+      "id": "E1",
+      "type": "testimony",
+      "description": "Riley saw the lunch in the fridge at 12:00 PM when they got milk; it was gone when they checked again at 12:35.",
+      "hint": "The receptionist's account of when the lunch was in the fridge and when it went missing.",
+      "clue_instruction": "Talk to Riley. Ask about the break room, the fridge, or when they saw the lunch.",
+      "weight": 3,
+      "critical": true,
+      "vulnerabilities": ["could_be_wrong_time"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Riley"],
+        "keywords": ["lunch", "fridge", "break room", "saw", "when"]
+      }
+    },
+    {
+      "id": "E2",
+      "type": "testimony",
+      "description": "Pat was mopping the hallway from 12:15 to 12:30 and saw only Morgan go into the break room during that time.",
+      "hint": "Who the janitor saw going into the break room during lunch.",
+      "clue_instruction": "Talk to Pat. Ask who went into the break room, or who they saw in the hallway during lunch.",
+      "weight": 4,
+      "critical": true,
+      "vulnerabilities": ["could_have_missed_someone"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Pat"],
+        "min_questions_asked_to_that_character": 1,
+        "keywords": ["break room", "hallway", "who", "saw", "Morgan", "lunch"]
+      }
+    },
+    {
+      "id": "E3",
+      "type": "testimony",
+      "description": "Morgan was in the break room alone from 12:20 to 12:25; no one else entered during that window.",
+      "hint": "Testimony that the intern was alone in the break room during the key time.",
+      "clue_instruction": "Talk to Pat again after learning about the break room. Ask exactly when Morgan went in and how long they were alone.",
+      "weight": 3,
+      "critical": false,
+      "vulnerabilities": ["timing_approximate"],
+      "reveal_conditions": {
+        "required_evidence_ids_found": ["E2"],
+        "required_characters_talked_to": ["Pat"],
+        "min_questions_asked_to_that_character": 2,
+        "keywords": ["alone", "when", "how long", "Morgan", "break room"]
+      }
+    },
+    {
+      "id": "E4",
+      "type": "testimony",
+      "description": "Riley noticed Morgan leaving the break room with their bag looking fuller than when they went in.",
+      "hint": "Someone noticing the intern's bag or behavior after leaving the break room.",
+      "clue_instruction": "Talk to Riley. Ask about Morgan, or what Morgan had when they left the break room.",
+      "weight": 2,
+      "critical": false,
+      "vulnerabilities": ["subjective"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Riley"],
+        "min_questions_asked_to_that_character": 1,
+        "keywords": ["Morgan", "bag", "leave", "break room"]
+      }
+    },
+    {
+      "id": "E5",
+      "type": "physical",
+      "description": "Janitor's mop log shows Pat was in the east hallway 12:15–12:30 (direct view of break room door); Pat could not have entered without being seen.",
+      "hint": "Where the janitor was during the key time—confirming they could not have taken the lunch.",
+      "clue_instruction": "Talk to Pat. Ask where they were mopping, or whether they could have gone into the break room themselves.",
+      "weight": 2,
+      "critical": false,
+      "vulnerabilities": ["log_could_be_wrong"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Pat"],
+        "min_questions_asked_to_that_character": 2,
+        "keywords": ["mop", "where", "hallway", "break room", "yourself"]
+      }
+    }
+  ],
+  "chains": {
+    "timeline_chain": ["E1", "E2", "E3"],
+    "opportunity_chain": ["E2", "E5"]
+  },
+  "reveal_rules": {
+    "max_evidence_per_answer": 1,
+    "question_budget": 20,
+    "max_evidence_presentation": 5
+  },
+  "critical_evidence_ids": ["E1", "E2"]
+}

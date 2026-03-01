@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Courtroom Quest — Investigate · Present · Verdict</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bs-body-font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mouse-x: 50%;
+      --mouse-y: 50%;
+      --bs-body-bg: #fafafa;
+      --bs-body-color: #0a0a0a;
+      --muted: #737373;
+      --border: #e5e5e5;
+      --card-bg: #fff;
+      --card-border: #e5e5e5;
+      --card-hover-border: #d4d4d4;
+      --card-hover-shadow: rgba(0, 0, 0, 0.06);
+      --section-alt-bg: #0a0a0a;
+      --section-alt-text: #fafafa;
+      --section-alt-muted: rgba(255, 255, 255, 0.65);
+      --btn-bg: #0a0a0a;
+      --btn-text: #fafafa;
+      --nav-scrolled-bg: rgba(250, 250, 250, 0.9);
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      --duration: 0.5s;
+    }
+
+    [data-theme="dark"] {
+      --bs-body-bg: #0a0a0a;
+      --bs-body-color: #fafafa;
+      --muted: #a3a3a3;
+      --border: #262626;
+      --card-bg: #171717;
+      --card-border: #262626;
+      --card-hover-border: #404040;
+      --card-hover-shadow: rgba(0, 0, 0, 0.4);
+      --section-alt-bg: #171717;
+      --section-alt-text: #fafafa;
+      --section-alt-muted: rgba(255, 255, 255, 0.6);
+      --btn-bg: #fafafa;
+      --btn-text: #0a0a0a;
+      --nav-scrolled-bg: rgba(10, 10, 10, 0.9);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    body {
+      font-family: var(--bs-body-font-family);
+      background: var(--bs-body-bg);
+      color: var(--bs-body-color);
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Nav — minimal */
+    .navbar {
+      padding-top: 1.25rem;
+      padding-bottom: 1.25rem;
+      transition: background var(--duration) var(--ease), box-shadow var(--duration) var(--ease);
+    }
+    .navbar.scrolled {
+      background: var(--nav-scrolled-bg) !important;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .navbar-brand {
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      color: var(--bs-body-color) !important;
+      transition: opacity var(--duration) var(--ease);
+    }
+    .navbar-brand:hover {
+      opacity: 0.7;
+    }
+    .btn-download {
+      font-weight: 500;
+      font-size: 0.9rem;
+      padding: 0.5rem 1.25rem;
+      border-radius: 9999px;
+      background: var(--btn-bg);
+      color: var(--btn-text) !important;
+      border: none;
+      transition: opacity var(--duration) var(--ease), transform var(--duration) var(--ease);
+    }
+    .btn-download:hover,
+    .btn-download:focus,
+    .btn-download:active {
+      background: var(--btn-bg) !important;
+      color: var(--btn-text) !important;
+    }
+    .btn-download:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+    .btn-theme {
+      width: 2.25rem;
+      height: 2.25rem;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: transparent;
+      color: var(--bs-body-color);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background var(--duration) var(--ease), border-color var(--duration) var(--ease), color var(--duration) var(--ease);
+    }
+    .btn-theme:hover {
+      background: var(--border);
+    }
+    .nav-link-custom {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color var(--duration) var(--ease);
+    }
+    .nav-link-custom:hover {
+      color: var(--bs-body-color);
+    }
+    .nav-link-custom:focus-visible {
+      outline: 2px solid var(--bs-body-color);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .btn-theme svg {
+      width: 1.1rem;
+      height: 1.1rem;
+    }
+    .btn-theme .icon-dark { display: none; }
+    .btn-theme .icon-light { display: block; }
+    [data-theme="dark"] .btn-theme .icon-dark { display: block; }
+    [data-theme="dark"] .btn-theme .icon-light { display: none; }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 6rem;
+      padding-bottom: 4rem;
+    }
+    .hero .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: reveal var(--duration) var(--ease) forwards;
+    }
+    .hero .reveal:nth-child(1) { animation-delay: 0.05s; }
+    .hero .reveal:nth-child(2) { animation-delay: 0.12s; }
+    .hero .reveal:nth-child(3) { animation-delay: 0.2s; }
+    .hero .reveal:nth-child(4) { animation-delay: 0.35s; }
+    .hero .reveal:nth-child(5) { animation-delay: 0.45s; }
+    @keyframes reveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .hero h1 {
+      font-weight: 600;
+      font-size: clamp(2.5rem, 7vw, 4rem);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+    }
+    .hero .tagline {
+      font-size: 0.9rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .hero .lead {
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--muted);
+      max-width: 28rem;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    /* Sections */
+    section {
+      padding-top: 5rem;
+      padding-bottom: 5rem;
+    }
+    .section-title {
+      font-weight: 600;
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Reveal on scroll — smooth */
+    .reveal-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+    }
+    .reveal-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-in.visible .card {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .card.reveal-card {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s var(--ease), transform 0.5s var(--ease), box-shadow 0.4s var(--ease), border-color 0.4s var(--ease);
+    }
+    .reveal-in.visible .col:nth-child(1) .card.reveal-card { transition-delay: 0.05s; }
+    .reveal-in.visible .col:nth-child(2) .card.reveal-card { transition-delay: 0.12s; }
+    .reveal-in.visible .col:nth-child(3) .card.reveal-card { transition-delay: 0.19s; }
+    .reveal-in.visible .col:nth-child(4) .card.reveal-card { transition-delay: 0.26s; }
+    .list-reveal li {
+      opacity: 0;
+      transform: translateX(-12px);
+      transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
+    }
+    .list-reveal.visible li:nth-child(1) { transition-delay: 0.06s; }
+    .list-reveal.visible li:nth-child(2) { transition-delay: 0.12s; }
+    .list-reveal.visible li:nth-child(3) { transition-delay: 0.18s; }
+    .list-reveal.visible li:nth-child(4) { transition-delay: 0.24s; }
+    .list-reveal.visible li {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Video block */
+    .video-section {
+      background: var(--section-alt-bg);
+      color: var(--section-alt-text);
+    }
+    .video-section .section-title,
+    .video-section .section-sub {
+      color: var(--section-alt-text) !important;
+    }
+    .video-section .section-sub {
+      opacity: 0.85;
+    }
+    .video-embed {
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 16/9;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s var(--ease), transform 0.6s var(--ease);
+    }
+    .video-embed.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .video-embed video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--section-alt-muted);
+      font-size: 0.9rem;
+      padding: 2rem;
+      text-align: center;
+    }
+    .video-placeholder strong {
+      color: var(--section-alt-text);
+      opacity: 0.8;
+      margin-bottom: 0.5rem;
+    }
+    .video-embed.has-video .video-placeholder {
+      display: none;
+    }
+
+    /* Cards — minimal */
+    .card {
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      background: var(--card-bg);
+      padding: 1.75rem;
+      height: 100%;
+      transition: box-shadow 0.4s var(--ease), border-color 0.4s var(--ease), transform 0.4s var(--ease);
+    }
+    .card:hover {
+      border-color: var(--card-hover-border);
+      box-shadow: 0 8px 30px var(--card-hover-shadow);
+      transform: translateY(-2px);
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+    }
+    .card-text {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    /* Highlights list */
+    .highlights-section {
+      background: var(--section-alt-bg);
+      color: var(--section-alt-text);
+    }
+    .highlights-section .section-title,
+    .highlights-section .section-sub {
+      color: var(--section-alt-text) !important;
+    }
+    .highlights-section .section-sub {
+      opacity: 0.85;
+    }
+    .highlights-section .list-group-item {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--section-alt-text);
+      padding: 0.9rem 0;
+      font-size: 0.95rem;
+      border-left: 0;
+      border-right: 0;
+    }
+    .highlights-section .list-group-item::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--muted);
+      margin-right: 0.75rem;
+      vertical-align: middle;
+    }
+
+    /* Download CTA */
+    .download-section .lead {
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Footer */
+    footer {
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color var(--duration) var(--ease);
+    }
+    footer a:hover {
+      color: var(--bs-body-color);
+    }
+
+    .text-secondary {
+      color: var(--muted) !important;
+    }
+
+    /* Skip link — visible only when focused */
+    .skip-link {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+      padding: 0.75rem 1.25rem;
+      background: var(--btn-bg);
+      color: var(--btn-text) !important;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 0 0 4px 0;
+      transform: translateY(-100%);
+      transition: transform var(--duration) var(--ease);
+    }
+    .skip-link:focus {
+      transform: translateY(0);
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+
+    /* Focus-visible — keyboard only */
+    .btn-download:focus-visible,
+    .btn-theme:focus-visible,
+    .navbar-brand:focus-visible,
+    .nav-link-custom:focus-visible,
+    footer a:focus-visible,
+    .section-cta:focus-visible {
+      outline: 2px solid var(--bs-body-color);
+      outline-offset: 2px;
+    }
+    [data-theme="dark"] .btn-download:focus-visible,
+    [data-theme="dark"] .btn-theme:focus-visible,
+    [data-theme="dark"] .navbar-brand:focus-visible,
+    [data-theme="dark"] .nav-link-custom:focus-visible,
+    [data-theme="dark"] footer a:focus-visible,
+    [data-theme="dark"] .section-cta:focus-visible {
+      outline-color: var(--bs-body-color);
+    }
+
+    /* Back to top */
+    .back-to-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 99;
+      width: 2.75rem;
+      height: 2.75rem;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: var(--card-bg);
+      color: var(--bs-body-color);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 20px var(--card-hover-shadow);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      transition: opacity var(--duration) var(--ease), visibility var(--duration) var(--ease), transform var(--duration) var(--ease), border-color var(--duration) var(--ease);
+    }
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .back-to-top:hover {
+      border-color: var(--card-hover-border);
+    }
+    .back-to-top:focus-visible {
+      outline: 2px solid var(--bs-body-color);
+      outline-offset: 2px;
+    }
+    .back-to-top svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+
+    /* Section bridge CTA */
+    .section-cta {
+      display: inline-block;
+      margin-top: 1.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color var(--duration) var(--ease);
+    }
+    .section-cta:hover {
+      color: var(--bs-body-color);
+    }
+
+    /* Celestial shapes — stars, shooting star, asteroids (shape only, theme color) */
+    .bg-shapes {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      transition: opacity 0.35s var(--ease);
+    }
+    .celestial-star {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.2;
+      background: var(--bs-body-color);
+    }
+    [data-theme="dark"] .celestial-star {
+      opacity: 0.15;
+      background: #fff;
+    }
+    .asteroid {
+      position: absolute;
+      opacity: 0.12;
+    }
+    [data-theme="dark"] .asteroid {
+      opacity: 0.1;
+    }
+    .asteroid svg {
+      width: 100%;
+      height: 100%;
+    }
+    .asteroid path {
+      fill: var(--bs-body-color);
+    }
+    [data-theme="dark"] .asteroid path {
+      fill: #fff;
+    }
+    .shooting-star {
+      position: fixed;
+      width: 200px;
+      height: 100px;
+      pointer-events: none;
+      transform-origin: left center;
+    }
+    .shooting-star__streak {
+      position: absolute;
+      width: 72px;
+      height: 2px;
+      border-radius: 2px;
+      left: 0;
+      top: 0;
+      background: linear-gradient(90deg, transparent 0%, var(--bs-body-color) 35%, var(--bs-body-color) 100%);
+      opacity: 0;
+      visibility: hidden;
+    }
+    [data-theme="dark"] .shooting-star__streak {
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 35%, rgba(255,255,255,0.9) 100%);
+    }
+    .shooting-star--run .shooting-star__streak {
+      visibility: visible;
+      animation: shooting-star 1.4s ease-out forwards;
+    }
+    .shooting-star:not(.shooting-star--run) .shooting-star__streak {
+      opacity: 0;
+      visibility: hidden;
+    }
+    @keyframes shooting-star {
+      0% {
+        transform: translate(0, 0) scaleX(0.3);
+        opacity: 0;
+      }
+      15% {
+        opacity: 0.6;
+      }
+      85% {
+        opacity: 0.5;
+      }
+      100% {
+        transform: translate(120px, 40px) scaleX(1);
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .bg-shapes,
+      .celestial-star,
+      .asteroid,
+      .shooting-star {
+        display: none !important;
+      }
+      .shooting-star__streak {
+        animation: none !important;
+      }
+    }
+
+    /* Mouse-follow focus light — above content so it's visible on white/grey too */
+    .focus-light {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      /* Small spotlight ~10% larger than pointer */
+      background: radial-gradient(
+        24px circle at var(--mouse-x) var(--mouse-y),
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.15) 50%,
+        transparent 100%
+      );
+      transition: opacity 0.3s var(--ease);
+    }
+    [data-theme="dark"] .focus-light {
+      background: radial-gradient(
+        24px circle at var(--mouse-x) var(--mouse-y),
+        rgba(255, 255, 255, 0.25) 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        transparent 100%
+      );
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .focus-light {
+        display: none;
+      }
+    }
+    /* In dark mode, grey-section overlays sit above shapes to hide them */
+    .grey-section-overlay {
+      position: fixed;
+      z-index: 0.5;
+      pointer-events: none;
+      background: var(--section-alt-bg);
+      transition: opacity 0.2s var(--ease);
+    }
+    .grey-section-overlay[data-active="false"] {
+      opacity: 0;
+      visibility: hidden;
+    }
+    body:not([data-theme="dark"]) .grey-section-overlay {
+      display: none;
+    }
+
+    /* Nav and back-to-top above the spotlight */
+    body > .navbar {
+      z-index: 2;
+    }
+    body > .back-to-top {
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-shapes" id="bgShapes" aria-hidden="true"></div>
+  <div class="grey-section-overlay" id="greyOverlay1" aria-hidden="true" data-active="true"></div>
+  <div class="grey-section-overlay" id="greyOverlay2" aria-hidden="true" data-active="true"></div>
+  <div class="focus-light" id="focusLight" aria-hidden="true"></div>
+  <a href="#main" class="skip-link">Skip to main content</a>
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="navbar">
+      <div class="container d-flex justify-content-between align-items-center">
+      <a class="navbar-brand" href="#">Courtroom Quest</a>
+      <div class="d-flex align-items-center gap-3">
+        <a href="#demo" class="nav-link-custom">Demo</a>
+        <button type="button" class="btn-theme" id="themeToggle" aria-label="Toggle dark mode">
+          <span class="icon-light" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+            </svg>
+          </span>
+          <span class="icon-dark" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+            </svg>
+          </span>
+        </button>
+        <a class="btn btn-download" href="#download">Download</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container text-center">
+        <h1 class="reveal">Courtroom Quest</h1>
+        <p class="tagline reveal">Investigate · Present · Verdict</p>
+        <p class="lead reveal">A complete CLI game: gather evidence, question witnesses, and argue your case in court. Fully offline with your local Ollama.</p>
+        <a href="#download" class="btn btn-download reveal" style="padding: 0.65rem 1.5rem;">Download on GitHub</a>
+      </div>
+    </section>
+
+    <section class="video-section py-5" id="demo">
+      <div class="container py-5">
+        <h2 class="section-title text-center reveal-in">See it in action</h2>
+        <p class="section-sub text-center reveal-in">Watch a quick demo of investigation and courtroom gameplay.</p>
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <div class="video-embed reveal-in" id="videoWrap">
+              <video controls playsinline>
+                <source src="demo.mp4" type="video/mp4" />
+              </video>
+              <div class="video-placeholder" id="videoPlaceholder">
+                <strong>Game demo video</strong>
+                <span>Set the <code>src</code> on the video above or embed a YouTube/Vimeo iframe. Add class <code>has-video</code> to this container to hide this text.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="text-center reveal-in">
+          <a href="#features" class="section-cta">How it works ↓</a>
+        </p>
+      </div>
+    </section>
+
+    <section class="features py-5" id="features">
+      <div class="container py-5">
+        <h2 class="section-title text-center reveal-in">How it works</h2>
+        <p class="section-sub text-center reveal-in">Two phases. One goal.</p>
+        <p class="text-center text-secondary small mb-4 reveal-in" style="max-width: 32rem; margin-left: auto; margin-right: auto;">You’re the prosecutor. The LLM plays everyone else: characters in investigation, the opposing lawyer in court, and the judge—all constrained by the case file.</p>
+        <div class="row g-4 reveal-in">
+          <div class="col-md-6 col-lg-3">
+            <div class="card reveal-card">
+              <h3 class="card-title">Investigation</h3>
+              <p class="card-text">Interrogate characters and unlock evidence. The LLM roleplays each witness within the case’s defined truth.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card reveal-card">
+              <h3 class="card-title">Courtroom</h3>
+              <p class="card-text">Present your case. The LLM plays the defense attorney (rebuttals) and the judge, who rules on the facts.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card reveal-card">
+              <h3 class="card-title">Fully offline</h3>
+              <p class="card-text">Runs with local Ollama—no paid APIs. Python 3.10+ and standard library.</p>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-3">
+            <div class="card reveal-card">
+              <h3 class="card-title">Deterministic verdict</h3>
+              <p class="card-text">Rule-based scoring: critical evidence, weights, and chains. The LLM explains; it doesn’t invent.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="highlights-section py-5">
+      <div class="container py-5">
+        <h2 class="section-title text-center reveal-in">In the box</h2>
+        <p class="section-sub text-center reveal-in">Everything you need.</p>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <ul class="list-group list-reveal">
+              <li class="list-group-item">Multiple cases: The Stolen Pen, The Missing Lunch, The Broken Vase, The Copied Report, The Stolen Keys</li>
+              <li class="list-group-item">Two phases: Investigation (question budget, evidence unlock) and Courtroom (present, rebut, close)</li>
+              <li class="list-group-item">Configurable Ollama models for NPCs, defense, and judge</li>
+              <li class="list-group-item">Dry-run mode for testing without an LLM</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="download-section py-5" id="download">
+      <div class="container py-5 text-center">
+        <h2 class="section-title reveal-in">Download now</h2>
+        <p class="lead reveal-in">Get the game and run it locally with Python and Ollama.</p>
+        <a href="https://github.com" class="btn btn-download reveal-in" target="_blank" rel="noopener noreferrer" style="padding: 0.65rem 1.5rem;">Download on GitHub</a>
+        <p class="mt-3 small text-secondary reveal-in">Releases and source at the repository above.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="text-center">
+    <p class="mb-1">Courtroom Quest — Investigate · Present · Verdict</p>
+    <p class="mb-1 small">Python 3.10+ · <a href="https://ollama.com" target="_blank" rel="noopener noreferrer">Ollama</a> required</p>
+    <p class="mb-0"><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a></p>
+  </footer>
+
+  <button type="button" class="back-to-top" id="backToTop" aria-label="Back to top">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+    </svg>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    (function () {
+      var greySections = document.querySelectorAll('.video-section, .highlights-section');
+      var overlay1 = document.getElementById('greyOverlay1');
+      var overlay2 = document.getElementById('greyOverlay2');
+      var overlays = [overlay1, overlay2];
+      function positionGreyOverlays() {
+        if (document.documentElement.getAttribute('data-theme') !== 'dark' || !overlay1 || !overlay2) return;
+        for (var i = 0; i < Math.min(2, greySections.length); i++) {
+          var rect = greySections[i].getBoundingClientRect();
+          var el = overlays[i];
+          el.style.top = rect.top + 'px';
+          el.style.left = rect.left + 'px';
+          el.style.width = rect.width + 'px';
+          el.style.height = rect.height + 'px';
+        }
+      }
+      window.addEventListener('scroll', positionGreyOverlays, { passive: true });
+      window.addEventListener('resize', positionGreyOverlays);
+      setInterval(positionGreyOverlays, 150);
+      positionGreyOverlays();
+    })();
+
+    (function () {
+      var STORAGE_KEY = 'courtroom-quest-theme';
+      function getPreferredTheme() {
+        var stored = localStorage.getItem(STORAGE_KEY);
+        if (stored === 'dark' || stored === 'light') return stored;
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      function setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem(STORAGE_KEY, theme);
+        var btn = document.getElementById('themeToggle');
+        if (btn) btn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode');
+      }
+      setTheme(getPreferredTheme());
+      document.getElementById('themeToggle') && document.getElementById('themeToggle').addEventListener('click', function () {
+        setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+    })();
+
+    (function () {
+      var wrap = document.getElementById('videoWrap');
+      var video = wrap && wrap.querySelector('video');
+      var placeholder = document.getElementById('videoPlaceholder');
+      if (video && placeholder) {
+        var src = (video.querySelector('source') && video.querySelector('source').src) || video.src;
+        if (src && src.length > 5) wrap.classList.add('has-video');
+        video.addEventListener('loadeddata', function () { wrap.classList.add('has-video'); });
+      }
+    })();
+
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var observer = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+          });
+        },
+        { rootMargin: '0px 0px -6% 0px', threshold: 0 }
+      );
+      document.querySelectorAll('.reveal-in, .list-reveal').forEach(function (el) {
+        observer.observe(el);
+      });
+    })();
+
+    (function () {
+      var nav = document.getElementById('navbar');
+      if (!nav) return;
+      function update() {
+        nav.classList.toggle('scrolled', window.scrollY > 16);
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    })();
+
+    (function () {
+      var btn = document.getElementById('backToTop');
+      if (!btn) return;
+      function update() {
+        btn.classList.toggle('visible', window.scrollY > 400);
+      }
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+      btn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    })();
+
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var doc = document.documentElement;
+      var light = document.getElementById('focusLight');
+      if (!light) return;
+      var targetX = 50, targetY = 50;
+      var currentX = 50, currentY = 50;
+      var ease = 0.08;
+      function setPosition(x, y) {
+        doc.style.setProperty('--mouse-x', x + '%');
+        doc.style.setProperty('--mouse-y', y + '%');
+      }
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+      function onMove(e) {
+        targetX = (e.clientX / window.innerWidth) * 100;
+        targetY = (e.clientY / window.innerHeight) * 100;
+      }
+      function tick() {
+        currentX = lerp(currentX, targetX, ease);
+        currentY = lerp(currentY, targetY, ease);
+        setPosition(currentX, currentY);
+        requestAnimationFrame(tick);
+      }
+      window.addEventListener('mousemove', onMove, { passive: true });
+      setPosition(50, 50);
+      tick();
+    })();
+
+    (function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var container = document.getElementById('bgShapes');
+      if (!container) return;
+      var mouseX = window.innerWidth / 2;
+      var mouseY = window.innerHeight / 2;
+      var attract = 0.2;
+      var lerpSpeed = 0.45;
+      var pointerRadius = 180;
+      var repelRadius = 55;
+      var repelStrength = 70;
+
+      function makeBlobPath(size) {
+        var points = 6 + Math.floor(Math.random() * 3);
+        var path = [];
+        for (var i = 0; i < points; i++) {
+          var angle = (i / points) * Math.PI * 2 + Math.random() * 0.5;
+          var r = size * (0.6 + Math.random() * 0.4);
+          path.push((50 + Math.cos(angle) * r) + ',' + (50 + Math.sin(angle) * r));
+        }
+        return 'M' + path.join('L') + 'Z';
+      }
+
+      var starCount = 70;
+      var starsData = [];
+      for (var i = 0; i < starCount; i++) {
+        var left = Math.random() * 100;
+        var top = Math.random() * 100;
+        var size = 1 + Math.random() * 2;
+        var el = document.createElement('div');
+        el.className = 'celestial-star';
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+        el.style.left = left + '%';
+        el.style.top = top + '%';
+        container.appendChild(el);
+        starsData.push({
+          left: left, top: top, size: size,
+          offsetX: 0, offsetY: 0,
+          phaseX: Math.random() * Math.PI * 2,
+          phaseY: Math.random() * Math.PI * 2,
+          speed: 0.2 + Math.random() * 0.3,
+          amplitude: 6 + Math.random() * 12
+        });
+      }
+
+      var asteroidCount = 14;
+      var asteroidsData = [];
+      for (var j = 0; j < asteroidCount; j++) {
+        var left = Math.random() * 100;
+        var top = Math.random() * 100;
+        var size = 8 + Math.random() * 8;
+        var el = document.createElement('div');
+        el.className = 'asteroid';
+        el.style.width = size + 'px';
+        el.style.height = size + 'px';
+        el.style.left = left + '%';
+        el.style.top = top + '%';
+        el.innerHTML = '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="' + makeBlobPath(42) + '"/></svg>';
+        container.appendChild(el);
+        asteroidsData.push({
+          left: left, top: top, size: size,
+          offsetX: 0, offsetY: 0,
+          phaseX: Math.random() * Math.PI * 2,
+          phaseY: Math.random() * Math.PI * 2,
+          speed: 0.12 + Math.random() * 0.18,
+          amplitude: 10 + Math.random() * 14
+        });
+      }
+
+      var shootingStarCount = 4;
+      var shootingStarEls = [];
+      for (var s = 0; s < shootingStarCount; s++) {
+        var ss = document.createElement('div');
+        ss.className = 'shooting-star';
+        ss.setAttribute('aria-hidden', 'true');
+        ss.innerHTML = '<div class="shooting-star__streak"></div>';
+        container.appendChild(ss);
+        shootingStarEls.push(ss);
+      }
+      function runOneShootingStar(el) {
+        el.style.left = (Math.random() * 85) + '%';
+        el.style.top = (5 + Math.random() * 60) + '%';
+        el.style.transform = 'rotate(' + (-35 + Math.random() * 40) + 'deg)';
+        el.classList.remove('shooting-star--run');
+        el.offsetHeight;
+        el.classList.add('shooting-star--run');
+        setTimeout(function () {
+          el.classList.remove('shooting-star--run');
+        }, 1500);
+      }
+      setTimeout(function () {
+        shootingStarEls.forEach(function (el, idx) {
+          setTimeout(function () {
+            runOneShootingStar(el);
+            (function schedule() {
+              setTimeout(function () {
+                runOneShootingStar(el);
+                schedule();
+              }, 5000 + Math.random() * 10000);
+            })();
+          }, idx * 2000 + Math.random() * 3000);
+        });
+      }, 500);
+
+      window.addEventListener('mousemove', function (e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      }, { passive: true });
+
+      function updateCelestial(d, el, centerX, centerY) {
+        var dx = mouseX - centerX;
+        var dy = mouseY - centerY;
+        var distance = Math.sqrt(dx * dx + dy * dy);
+        var targetX = 0, targetY = 0;
+        if (distance < repelRadius) {
+          var repelInfluence = 1 - distance / repelRadius;
+          var norm = distance < 1 ? 1 : distance;
+          targetX = ((centerX - mouseX) / norm) * repelStrength * repelInfluence;
+          targetY = ((centerY - mouseY) / norm) * repelStrength * repelInfluence;
+        } else if (distance < pointerRadius) {
+          var influence = 1 - (distance - repelRadius) / (pointerRadius - repelRadius);
+          targetX = dx * attract * influence;
+          targetY = dy * attract * influence;
+        }
+        d.offsetX += (targetX - d.offsetX) * lerpSpeed;
+        d.offsetY += (targetY - d.offsetY) * lerpSpeed;
+        var driftX = Math.sin(t * d.speed + d.phaseX) * d.amplitude;
+        var driftY = Math.cos(t * d.speed * 0.9 + d.phaseY) * d.amplitude;
+        el.style.transform = 'translate(' + (d.offsetX + driftX) + 'px, ' + (d.offsetY + driftY) + 'px)';
+      }
+
+      var t = 0;
+      function tick() {
+        t = performance.now() * 0.001;
+        var W = window.innerWidth;
+        var H = window.innerHeight;
+        var stars = container.querySelectorAll('.celestial-star');
+        for (var i = 0; i < stars.length; i++) {
+          var d = starsData[i];
+          var centerX = (d.left / 100) * W + d.size / 2;
+          var centerY = (d.top / 100) * H + d.size / 2;
+          updateCelestial(d, stars[i], centerX, centerY);
+        }
+        var asteroids = container.querySelectorAll('.asteroid');
+        for (var k = 0; k < asteroids.length; k++) {
+          var d = asteroidsData[k];
+          var centerX = (d.left / 100) * W + d.size / 2;
+          var centerY = (d.top / 100) * H + d.size / 2;
+          updateCelestial(d, asteroids[k], centerX, centerY);
+        }
+        requestAnimationFrame(tick);
+      }
+      tick();
+    })();
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+{
+  "title": "The Stolen Pen",
+  "scenario_intro": "Mr. Webb's valuable fountain pen has gone missing from his office. It was last seen on his desk at 5 PM; by 6 PM it was gone. Only three people had access after 5 PM: Sam (the intern), Jordan (the cleaner), and Alex (the secretary). As the prosecutor, you must find out who was where and when, and gather evidence that places the culprit at the scene with the opportunity to take the pen. Question each person about their movements, what they saw, and when they left.",
+  "hints_intro": "To win this case you need to prove who was in the office after 5 PM and how they could have taken the pen. Look for: testimony about who was still at the desk and when (especially from the cleaner, who does the evening round), the secretary’s account of who had access after they left, any contradictions in when people say they left, and any records of who left and how—such as security logs or keycard use.",
+  "characters": [
+    {
+      "name": "Sam",
+      "role": "intern",
+      "persona": "Young, nervous intern. Was in the office until 5:30 PM to finish a report. Avoids eye contact when discussing the afternoon.",
+      "knows": ["E1", "E2", "E4"],
+      "liar": true,
+      "lie_strategy": "Minimize how long they stayed; claim they left earlier than they did; deflect toward the cleaner.",
+      "facts": [
+        "Alex left at 5:00 PM. The pen was on the desk when Alex left.",
+        "Sam was in the office until around 5:30–5:45 PM.",
+        "The side door was used at 5:47 PM (security log); only Sam had keycard for that exit that evening."
+      ]
+    },
+    {
+      "name": "Jordan",
+      "role": "cleaner",
+      "persona": "Quiet cleaner who does the evening round. Notices small details. Saw Sam still at the desk when they started their round at 5:15.",
+      "knows": ["E1", "E3", "E5"],
+      "liar": false,
+      "lie_strategy": "",
+      "facts": [
+        "Jordan started the cleaning round at 5:15 PM and saw Sam still at the desk at that time.",
+        "The side door was used at 5:47 PM (security log).",
+        "The cleaning cart was by the desk from 5:15 to 5:35 PM; Jordan was in the hallway during that time."
+      ]
+    },
+    {
+      "name": "Alex",
+      "role": "secretary",
+      "persona": "Organized secretary. Left at 5 PM sharp. Did not see the pen when leaving; assumes it was on the desk.",
+      "knows": ["E2", "E4"],
+      "liar": false,
+      "lie_strategy": "",
+      "facts": [
+        "Alex left at 5:00 PM. The pen was on the desk when Alex left.",
+        "Only Sam and Jordan had access to the office after 5:00 PM."
+      ]
+    }
+  ],
+  "suspects": ["Sam", "Jordan", "Alex"],
+  "truth": {
+    "culprit": "Sam",
+    "timeline": "Sam stayed until 5:45, took the pen when alone, left via side door.",
+    "motive": "Needed money; planned to sell the pen.",
+    "method": "Pocketed the pen while packing up, walked out normally."
+  },
+  "evidence": [
+    {
+      "id": "E1",
+      "type": "testimony",
+      "description": "Jordan saw Sam still at the desk at 5:15 PM when cleaning round started (Sam claimed they left by 5:00).",
+      "hint": "Testimony from the cleaner about who was still at the desk when they started their round.",
+      "clue_instruction": "Talk to Jordan. Ask who was at the desk when they started their cleaning round, or what they saw when they came in (e.g. Sam, the desk, the time).",
+      "weight": 3,
+      "critical": true,
+      "vulnerabilities": ["inconsistent_witness", "timing_confusion"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Jordan"],
+        "min_questions_asked_to_that_character": 1,
+        "keywords": ["Sam", "desk", "time", "when", "saw", "cleaning", "Jordan"]
+      }
+    },
+    {
+      "id": "E2",
+      "type": "testimony",
+      "description": "Alex confirms the pen was on the desk when they left at 5 PM; only Sam and Jordan had access after.",
+      "hint": "The secretary’s account of who had access to the office after they left.",
+      "clue_instruction": "Talk to Alex. Ask who had access to the office after they left, or whether the pen was on the desk when they left.",
+      "weight": 2,
+      "critical": false,
+      "vulnerabilities": ["did_not_see_pen_leave"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Alex"],
+        "keywords": ["pen", "desk", "leave", "who", "access"]
+      }
+    },
+    {
+      "id": "E3",
+      "type": "physical",
+      "description": "Security log shows side door used at 5:47 PM (only Sam had keycard for that exit that evening).",
+      "hint": "A record of who used the side door and when (e.g. security log or keycard).",
+      "clue_instruction": "After you have the cleaner’s testimony about who was at the desk, talk to Jordan again. Ask about the side door, security log, keycard, or who left and when.",
+      "weight": 4,
+      "critical": true,
+      "vulnerabilities": ["keycard_shared", "log_error"],
+      "reveal_conditions": {
+        "required_evidence_ids_found": ["E1"],
+        "required_characters_talked_to": ["Jordan"],
+        "min_questions_asked_to_that_character": 2,
+        "keywords": ["door", "exit", "security", "log", "keycard", "left"]
+      }
+    },
+    {
+      "id": "E4",
+      "type": "testimony",
+      "description": "Sam initially said they left at 5:00; later admitted being there until 5:30 when pressed.",
+      "hint": "A contradiction in when the intern says they left the office.",
+      "clue_instruction": "Talk to Sam. Ask when they left, what time they left, or how long they stayed. Ask more than once to get a change in their story.",
+      "weight": 3,
+      "critical": false,
+      "vulnerabilities": ["innocent_confusion"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Sam"],
+        "min_questions_asked_to_that_character": 2,
+        "keywords": ["when", "left", "time", "leave", "how long"]
+      }
+    },
+    {
+      "id": "E5",
+      "type": "physical",
+      "description": "Cleaning cart was by the desk from 5:15–5:35; Jordan was in the hallway during that window (could not have taken pen without being seen).",
+      "hint": "Where the cleaner was during the key time (e.g. cart position, hallway)—showing they could or could not have taken the pen.",
+      "clue_instruction": "Talk to Jordan. Ask where their cart was, where they were during the cleaning round, or whether they were in the hallway or by the desk.",
+      "weight": 2,
+      "critical": false,
+      "vulnerabilities": ["could_have_grabbed_quickly"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Jordan"],
+        "min_questions_asked_to_that_character": 2,
+        "keywords": ["cart", "desk", "where", "during", "hallway"]
+      }
+    }
+  ],
+  "chains": {
+    "timeline_chain": ["E1", "E3", "E4"],
+    "physical_chain": ["E3", "E5"]
+  },
+  "reveal_rules": {
+    "max_evidence_per_answer": 1,
+    "question_budget": 20,
+    "max_evidence_presentation": 5
+  },
+  "critical_evidence_ids": ["E1", "E3"]
+}

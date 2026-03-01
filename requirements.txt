@@ -1,0 +1,4 @@
+# Courtroom Quest - minimal dependencies
+# Standard library is used for HTTP (urllib). No required packages.
+# If you prefer requests for Ollama calls, uncomment:
+# requests>=2.28.0

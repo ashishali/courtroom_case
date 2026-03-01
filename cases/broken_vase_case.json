@@ -1,0 +1,138 @@
+{
+  "title": "The Broken Vase",
+  "scenario_intro": "A vase in the lobby was broken between 2:00 and 2:30 PM. Three people were in the area: Jamie (the delivery person), Quinn (the security guard), and Taylor (the intern at the front desk). As the prosecutor, you must prove who broke the vase—whether by accident or carelessness—and when.",
+  "hints_intro": "To win you need to place someone near the vase at the time it broke. Look for: who was in the lobby with the vase, when the delivery arrived, who heard or saw the crash, and the timeline of events.",
+  "characters": [
+    {
+      "name": "Jamie",
+      "role": "delivery person",
+      "persona": "Delivery driver. Brought a large box on a dolly at 2:05 PM. Says they were careful but was in a hurry.",
+      "knows": ["E1", "E3", "E5"],
+      "liar": true,
+      "lie_strategy": "Minimize how close the dolly got to the vase; say the vase was already cracked.",
+      "facts": [
+        "The delivery arrived at 2:05 PM.",
+        "The crash happened around 2:12 PM, shortly after the delivery entered the lobby.",
+        "The crash was reported at 2:15 PM."
+      ]
+    },
+    {
+      "name": "Quinn",
+      "role": "security guard",
+      "persona": "Alert security guard. Was at the lobby desk. Saw the delivery and heard the crash.",
+      "knows": ["E1", "E3", "E4"],
+      "liar": false,
+      "lie_strategy": "",
+      "facts": [
+        "The delivery arrived at 2:05 PM. Jamie signed in at 2:05 PM.",
+        "Quinn heard the crash at around 2:12 PM and looked up to see Jamie by the broken vase with the dolly.",
+        "The crash was reported at 2:15 PM."
+      ]
+    },
+    {
+      "name": "Taylor",
+      "role": "intern",
+      "persona": "Front-desk intern. Was at the desk the whole time. Did not touch the vase.",
+      "knows": ["E2", "E4", "E5"],
+      "liar": false,
+      "lie_strategy": "",
+      "facts": [
+        "The vase was intact when Jamie (the delivery person) arrived.",
+        "The vase was broken when Jamie left the lobby.",
+        "Taylor was at the front desk the whole time and did not go near the vase; only Jamie and Quinn were near it."
+      ]
+    }
+  ],
+  "suspects": ["Jamie", "Quinn", "Taylor"],
+  "truth": {
+    "culprit": "Jamie",
+    "timeline": "Jamie arrived at 2:05 with dolly, knocked the vase at 2:12 while turning the corner.",
+    "motive": "Accident; not looking where the dolly was going.",
+    "method": "Dolly hit the vase stand; vase fell and shattered."
+  },
+  "evidence": [
+    {
+      "id": "E1",
+      "type": "testimony",
+      "description": "Quinn saw Jamie with the dolly pass right by the vase stand and then heard the crash about a minute later.",
+      "hint": "The security guard's account of the delivery person near the vase and the crash.",
+      "clue_instruction": "Talk to Quinn. Ask about the delivery, the dolly, the vase, or what they saw and heard.",
+      "weight": 4,
+      "critical": true,
+      "vulnerabilities": ["saw_after_not_during"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Quinn"],
+        "keywords": ["delivery", "dolly", "vase", "crash", "saw", "heard"]
+      }
+    },
+    {
+      "id": "E2",
+      "type": "testimony",
+      "description": "Taylor was at the front desk the whole time and confirms they did not go near the vase; only Jamie and Quinn were near it.",
+      "hint": "The intern's account that they did not touch the vase and who was near it.",
+      "clue_instruction": "Talk to Taylor. Ask if they touched the vase or who was near the vase.",
+      "weight": 2,
+      "critical": false,
+      "vulnerabilities": ["could_have_looked_away"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Taylor"],
+        "keywords": ["vase", "desk", "who", "near", "touch"]
+      }
+    },
+    {
+      "id": "E3",
+      "type": "physical",
+      "description": "Delivery log shows Jamie signed in at 2:05 PM; the crash was reported at 2:15 PM.",
+      "hint": "A record of when the delivery person arrived and when the vase broke.",
+      "clue_instruction": "Talk to Quinn or Jamie. Ask about the delivery log, what time they arrived, or when the crash happened.",
+      "weight": 3,
+      "critical": true,
+      "vulnerabilities": ["log_could_be_wrong"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Quinn"],
+        "min_questions_asked_to_that_character": 1,
+        "keywords": ["time", "when", "log", "arrived", "crash", "2"]
+      }
+    },
+    {
+      "id": "E4",
+      "type": "testimony",
+      "description": "Quinn heard the crash at around 2:12 PM and looked up to see Jamie standing by the broken vase with the dolly.",
+      "hint": "When the crash was heard and who was at the scene right after.",
+      "clue_instruction": "Talk to Quinn again. Ask exactly when they heard the crash and what they saw when they looked.",
+      "weight": 3,
+      "critical": false,
+      "vulnerabilities": ["timing_approximate"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Quinn"],
+        "min_questions_asked_to_that_character": 2,
+        "keywords": ["heard", "crash", "when", "saw", "looked"]
+      }
+    },
+    {
+      "id": "E5",
+      "type": "testimony",
+      "description": "Taylor says the vase was intact when Jamie arrived and was broken when Jamie left the lobby.",
+      "hint": "The vase was whole before the delivery and broken after—narrowing the time.",
+      "clue_instruction": "Talk to Taylor. Ask whether the vase was broken before or after the delivery person was there.",
+      "weight": 2,
+      "critical": false,
+      "vulnerabilities": ["might_not_have_noticed"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Taylor"],
+        "min_questions_asked_to_that_character": 1,
+        "keywords": ["vase", "broken", "before", "after", "Jamie", "delivery"]
+      }
+    }
+  ],
+  "chains": {
+    "timeline_chain": ["E3", "E4"],
+    "witness_chain": ["E1", "E5"]
+  },
+  "reveal_rules": {
+    "max_evidence_per_answer": 1,
+    "question_budget": 20,
+    "max_evidence_presentation": 5
+  },
+  "critical_evidence_ids": ["E1", "E3"]
+}

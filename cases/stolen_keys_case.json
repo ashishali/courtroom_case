@@ -1,0 +1,139 @@
+{
+  "title": "The Stolen Keys",
+  "scenario_intro": "The keys to the storage room went missing from the front desk. They were there at 10 AM when the secretary left for a short break and were gone by 11 AM. Three people could have taken them: Alex (maintenance), Sam (the secretary), and Jordan (the intern). As the prosecutor, you must find out who had access to the keys and who took them.",
+  "hints_intro": "To win you need to show who had the keys last and who was at the front desk when they went missing. Look for: when the keys were last seen, who was at the desk alone, and who was seen near the storage room.",
+  "characters": [
+    {
+      "name": "Alex",
+      "role": "maintenance",
+      "persona": "Maintenance worker. Used the keys at 10 AM to get into the storage room and says they returned them to the desk.",
+      "knows": ["E1", "E2", "E5"],
+      "liar": false,
+      "lie_strategy": "",
+      "facts": [
+        "Alex used the keys at 10:00 AM and returned them to the desk by 10:10 AM.",
+        "Sam left for break at 10:15 and returned at 10:45; the keys were gone when Sam returned.",
+        "Alex saw Jordan near the storage room around 10:35 AM."
+      ]
+    },
+    {
+      "name": "Sam",
+      "role": "secretary",
+      "persona": "Front-desk secretary. Left for a break at 10:15 and returned at 10:45. The keys were gone when they got back.",
+      "knows": ["E1", "E2", "E4"],
+      "liar": false,
+      "lie_strategy": "",
+      "facts": [
+        "The keys were on the desk at 10:00 AM when Sam left for break.",
+        "Sam left at 10:15 and returned at 10:45; the keys were gone when Sam returned.",
+        "Jordan was at the front desk alone from 10:15 to 10:45 while Sam was on break."
+      ]
+    },
+    {
+      "name": "Jordan",
+      "role": "intern",
+      "persona": "Intern. Was covering the front desk while Sam was on break. Fidgets when asked about the keys.",
+      "knows": ["E3", "E4", "E5"],
+      "liar": true,
+      "lie_strategy": "Claim they didn't touch the keys; say they didn't notice they were gone until Sam asked.",
+      "facts": [
+        "The keys were on the desk when Sam left at 10:15.",
+        "Jordan was alone at the front desk from 10:15 to 10:45.",
+        "The keys were reported missing at 11:00 AM."
+      ]
+    }
+  ],
+  "suspects": ["Alex", "Sam", "Jordan"],
+  "truth": {
+    "culprit": "Jordan",
+    "timeline": "Jordan took the keys from the desk at 10:30 while alone, used them to get supplies, then lost them near the storage room.",
+    "motive": "Wanted to get something from storage without asking; then misplaced the keys.",
+    "method": "Took keys from desk when Sam was on break, used them, dropped them in the hallway."
+  },
+  "evidence": [
+    {
+      "id": "E1",
+      "type": "testimony",
+      "description": "Sam confirms the keys were on the desk at 10 AM when they left for their break and were gone when they returned at 10:45.",
+      "hint": "The secretary's account of when the keys were last seen on the desk.",
+      "clue_instruction": "Talk to Sam. Ask when the keys were on the desk, when they left for break, or when they noticed the keys were missing.",
+      "weight": 3,
+      "critical": true,
+      "vulnerabilities": ["might_misremember"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Sam"],
+        "keywords": ["keys", "desk", "break", "when", "missing", "left"]
+      }
+    },
+    {
+      "id": "E2",
+      "type": "testimony",
+      "description": "Alex used the keys at 10 AM and returned them to the desk by 10:10; Sam saw them there before leaving at 10:15.",
+      "hint": "Maintenance returned the keys before the secretary left; keys were there at 10:15.",
+      "clue_instruction": "Talk to Alex or Sam. Ask when Alex used the keys, when they returned them, or where the keys were at 10:15.",
+      "weight": 3,
+      "critical": true,
+      "vulnerabilities": ["could_be_lying"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Alex"],
+        "min_questions_asked_to_that_character": 1,
+        "keywords": ["keys", "returned", "desk", "10", "storage"]
+      }
+    },
+    {
+      "id": "E3",
+      "type": "testimony",
+      "description": "Jordan was alone at the front desk from 10:15 to 10:45; no one else was there during that time.",
+      "hint": "The intern was the only person at the desk when the keys went missing.",
+      "clue_instruction": "Talk to Sam. Ask who was at the desk during their break, or who was covering the front desk.",
+      "weight": 4,
+      "critical": false,
+      "vulnerabilities": ["someone_could_have_passed_by"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Sam"],
+        "min_questions_asked_to_that_character": 2,
+        "keywords": ["break", "who", "desk", "Jordan", "alone", "covering"]
+      }
+    },
+    {
+      "id": "E4",
+      "type": "testimony",
+      "description": "Sam says when they returned at 10:45 Jordan was at the desk and said they hadn't seen the keys—but Jordan had been there the whole time.",
+      "hint": "The intern was at the desk the whole time the keys were there and when they went missing.",
+      "clue_instruction": "Talk to Sam again. Ask what Jordan said when they asked about the keys, or whether Jordan was there the whole break.",
+      "weight": 2,
+      "critical": false,
+      "vulnerabilities": ["intern_might_not_have_noticed"],
+      "reveal_conditions": {
+        "required_evidence_ids_found": ["E3"],
+        "required_characters_talked_to": ["Sam"],
+        "keywords": ["Jordan", "said", "keys", "returned", "10:45"]
+      }
+    },
+    {
+      "id": "E5",
+      "type": "testimony",
+      "description": "Alex saw Jordan near the storage room at around 10:35—after Alex had already returned the keys.",
+      "hint": "Someone saw the intern near the storage room during the time the keys went missing.",
+      "clue_instruction": "Talk to Alex. Ask if they saw anyone near the storage room after they returned the keys, or who was in the hallway.",
+      "weight": 3,
+      "critical": false,
+      "vulnerabilities": ["could_be_different_time"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Alex"],
+        "min_questions_asked_to_that_character": 2,
+        "keywords": ["storage", "saw", "who", "hallway", "Jordan", "after"]
+      }
+    }
+  ],
+  "chains": {
+    "timeline_chain": ["E1", "E2", "E3"],
+    "opportunity_chain": ["E3", "E5"]
+  },
+  "reveal_rules": {
+    "max_evidence_per_answer": 1,
+    "question_budget": 20,
+    "max_evidence_presentation": 5
+  },
+  "critical_evidence_ids": ["E1", "E2"]
+}

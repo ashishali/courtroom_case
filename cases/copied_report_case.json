@@ -1,0 +1,137 @@
+{
+  "title": "The Copied Report",
+  "scenario_intro": "A confidential report was printed and taken out of the building. Only three people had access to it: Casey (the assistant), Jordan (the IT person), and Morgan (the manager). The report was printed at 4:45 PM. As the prosecutor, you must prove who printed it and who had the opportunity to take it.",
+  "hints_intro": "To win you need to show who printed the report and who was at the assistant's desk when it was printed. Look for: print logs, who was where at 4:45, and who left with the report.",
+  "characters": [
+    {
+      "name": "Casey",
+      "role": "assistant",
+      "persona": "The manager's assistant. Was at their desk until 5 PM. Seems nervous when asked about the printer.",
+      "knows": ["E1", "E4", "E5"],
+      "liar": true,
+      "lie_strategy": "Claim they didn't print it; say someone else must have used their computer.",
+      "facts": [
+        "The report was printed at 4:45 PM from the computer at the assistant's desk (Casey's login).",
+        "Casey was at their desk from 4:40 to 4:50 PM. No one else used Casey's computer during that time.",
+        "Casey left at 5 PM. Security saw Casey leave carrying a folder."
+      ]
+    },
+    {
+      "name": "Jordan",
+      "role": "IT",
+      "persona": "IT support. Was in the server room from 4:30 to 5:00. Has access to print logs.",
+      "knows": ["E1", "E3", "E5"],
+      "liar": false,
+      "lie_strategy": "",
+      "facts": [
+        "The report was printed at 4:45 PM from the computer at the assistant's desk (Casey's login).",
+        "Jordan was in the server room from 4:30 to 5:00 PM and did not use the assistant's computer.",
+        "Casey left at 5 PM. Security saw Casey leave carrying a folder."
+      ]
+    },
+    {
+      "name": "Morgan",
+      "role": "manager",
+      "persona": "Busy manager. Was in a meeting 4:30 to 5:00. Did not use the assistant's computer.",
+      "knows": ["E2", "E4"],
+      "liar": false,
+      "lie_strategy": "",
+      "facts": [
+        "Morgan was in a meeting from 4:30 to 5:00 PM and did not leave.",
+        "Casey was alone at their desk from 4:40 to 4:50 PM. No one else used the assistant's computer during that time."
+      ]
+    }
+  ],
+  "suspects": ["Casey", "Jordan", "Morgan"],
+  "truth": {
+    "culprit": "Casey",
+    "timeline": "Casey printed the report at 4:45 from their computer, put it in a folder, and left with it at 5 PM.",
+    "motive": "Wanted to share the report with a friend outside the company.",
+    "method": "Printed from their own computer, took the copy from the printer, left with it in a folder."
+  },
+  "evidence": [
+    {
+      "id": "E1",
+      "type": "physical",
+      "description": "Print log shows the report was printed at 4:45 PM from the computer at the assistant's desk (Casey's login).",
+      "hint": "A record of when and from which computer the report was printed.",
+      "clue_instruction": "Talk to Jordan. Ask about the print log, who printed the report, or which computer it came from.",
+      "weight": 4,
+      "critical": true,
+      "vulnerabilities": ["login_shared", "log_error"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Jordan"],
+        "keywords": ["print", "log", "computer", "desk", "4:45", "report"]
+      }
+    },
+    {
+      "id": "E2",
+      "type": "testimony",
+      "description": "Morgan was in a meeting from 4:30 to 5:00 and did not leave; could not have used Casey's computer.",
+      "hint": "The manager's alibi—they were in a meeting and could not have printed it.",
+      "clue_instruction": "Talk to Morgan. Ask where they were at 4:45 or whether they used the assistant's computer.",
+      "weight": 2,
+      "critical": false,
+      "vulnerabilities": ["could_have_slipped_out"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Morgan"],
+        "keywords": ["meeting", "4:45", "where", "computer", "assistant"]
+      }
+    },
+    {
+      "id": "E3",
+      "type": "testimony",
+      "description": "Jordan was in the server room the whole time and did not use the assistant's machine; only Casey had access to that computer at 4:45.",
+      "hint": "IT's account that they were not at the assistant's desk and who had access.",
+      "clue_instruction": "Talk to Jordan again. Ask if they were at Casey's desk or who had access to that computer at 4:45.",
+      "weight": 3,
+      "critical": false,
+      "vulnerabilities": ["remote_access"],
+      "reveal_conditions": {
+        "required_evidence_ids_found": ["E1"],
+        "required_characters_talked_to": ["Jordan"],
+        "min_questions_asked_to_that_character": 1,
+        "keywords": ["server room", "desk", "access", "who", "computer"]
+      }
+    },
+    {
+      "id": "E4",
+      "type": "testimony",
+      "description": "Casey was alone at their desk from 4:40 to 4:50; no one else used their computer during that time.",
+      "hint": "Who was at the assistant's desk when the report was printed.",
+      "clue_instruction": "Talk to Morgan. Ask who was at Casey's desk around 4:45 or who could have used the assistant's computer.",
+      "weight": 3,
+      "critical": true,
+      "vulnerabilities": ["manager_not_watching"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Morgan"],
+        "keywords": ["Casey", "desk", "alone", "4:45", "who"]
+      }
+    },
+    {
+      "id": "E5",
+      "type": "testimony",
+      "description": "Security saw Casey leave at 5 PM carrying a folder; the report was found missing from the building that evening.",
+      "hint": "Who left with a folder that could have contained the report.",
+      "clue_instruction": "Talk to Jordan or Casey. Ask about who left the building, what Casey had when they left, or security.",
+      "weight": 2,
+      "critical": false,
+      "vulnerabilities": ["folder_could_be_anything"],
+      "reveal_conditions": {
+        "required_characters_talked_to": ["Jordan"],
+        "min_questions_asked_to_that_character": 2,
+        "keywords": ["leave", "folder", "security", "Casey", "5"]
+      }
+    }
+  ],
+  "chains": {
+    "access_chain": ["E1", "E4"],
+    "alibi_chain": ["E2", "E3"]
+  },
+  "reveal_rules": {
+    "max_evidence_per_answer": 1,
+    "question_budget": 20,
+    "max_evidence_presentation": 5
+  },
+  "critical_evidence_ids": ["E1", "E4"]
+}
