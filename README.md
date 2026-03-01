@@ -11,12 +11,6 @@ A complete, runnable CLI game that works **fully offline** except for calling yo
 ## Install
 
 1. Clone or copy this project.
-2. (Optional) Create a virtualenv and activate it:
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate   # Windows: .venv\Scripts\activate
-   ```
-3. No `pip install` is required unless you add optional dependencies (see `requirements.txt`).
 
 ## How to run
 
